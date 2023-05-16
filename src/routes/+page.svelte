@@ -1,12 +1,10 @@
-<script> 
+<script>
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
-
     let immerFalse = false;
     let todoText = '';
     let todos = [];
     let draggedTodo;
-
     onMount(() => {
         if (browser) {
             const storedTodos = JSON.parse(
@@ -17,30 +15,26 @@
             }
         }
     });
-
     function saveTodos() {
         // Save todos to local storage
         if (browser) {
             localStorage.setItem('todos', JSON.stringify(todos));
         }
     }
-
     function addTodo() {
         todos.push({ text: todoText, done: false });
         todos = todos;
         todoText = '';
         saveTodos();
     }
-
     function remove(index) {
         //delete entry
         todos.splice(index, 1);
         todos = todos;
         saveTodos();
     }
-
     function drop(event) {
-        let dropedTodo = event.originalTarget.id;
+        let dropedTodo = event.target.id;
         if ( draggedTodo < dropedTodo) {
             dropedTodo -= 1;
         }
@@ -51,25 +45,22 @@
         saveTodos();
     }
 </script>
-
 <h1>TODO APP</h1>
-
 <!-- textfeld -->
 <input type="text" class="todo-input" bind:value={todoText} on:keypress={(event) => { if (event.key === "Enter") { addTodo() } }}/>
 <!-- button add -->
 <button on:click={addTodo}>ADD</button>
-
 {#each todos as todo, index}
     <!-- todo -->
-    <hr id={index} class="drag-target" on:dragover={() => event.preventDefault() } on:dragenter={() => { event.target.classList.toggle("drag-target-current") } } on:dragleave={() => { event.target.classList.toggle("drag-target-current") } } on:drop={ () => { drop(event); event.target.classList.toggle("drag-target-current") }}>
-    <div id={index} class="todo-entry" class:done={todo.done} draggable="true" on:dragstart={() => draggedTodo = event.originalTarget.id }>
+    <hr id={index} class="drag-target" on:dragover={(event) => event.preventDefault() } on:dragenter={(event) => { event.target.classList.toggle("drag-target-current") } } on:dragleave={(event) => { event.target.classList.toggle("drag-target-current") } } on:drop={ (event) => { drop(event); event.target.classList.toggle("drag-target-current") }}>
+    <div id={index} class="todo-entry" class:done={todo.done} draggable="true" on:dragstart={(event) => draggedTodo = event.target.id }>
             <!-- checkboxen -->
             <input type="checkbox" bind:checked={todo.done} on:change={saveTodos} />
             <!-- text -->
             <div>{todo.text}</div>
             <button
                     class="delete"
-                    on:click={() => 
+                    on:click={() =>
                         remove(index)
                     }>X</button
             >
