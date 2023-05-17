@@ -1,10 +1,13 @@
 <script>
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
+    import ToDo from '../lib/components/ToDo.svelte';
+
     let immerFalse = false;
     let todoText = '';
     let todos = [];
     let draggedTodo;
+  
     onMount(() => {
         if (browser) {
             const storedTodos = JSON.parse(
@@ -53,36 +56,14 @@
 {#each todos as todo, index}
     <!-- todo -->
     <hr id={index} class="drag-target" on:dragover={(event) => event.preventDefault() } on:dragenter={(event) => { event.target.classList.toggle("drag-target-current") } } on:dragleave={(event) => { event.target.classList.toggle("drag-target-current") } } on:drop={ (event) => { drop(event); event.target.classList.toggle("drag-target-current") }}>
-    <div id={index} class="todo-entry" class:done={todo.done} draggable="true" on:dragstart={(event) => draggedTodo = event.target.id }>
-            <!-- checkboxen -->
-            <input type="checkbox" bind:checked={todo.done} on:change={saveTodos} />
-            <!-- text -->
-            <div>{todo.text}</div>
-            <button
-                    class="delete"
-                    on:click={() =>
-                        remove(index)
-                    }>X</button
-            >
-    </div>
-{/each}
+<!--Component ausgeschnitten-->
+        <div id={index} class="todo-entry" class:done={todo.done} draggable="true" on:dragstart={(event) => draggedTodo = event.target.id }>
+            <ToDo todoData={todo} index={index} on:removeEvent={remove}/> 
+        </div>
+        {/each}
     <hr id={todos.length} class="drag-target" class:drag-target-current={immerFalse} on:dragover={() => event.preventDefault() } on:dragenter={() => { event.target.classList.toggle("drag-target-current") } } on:dragleave={() => { event.target.classList.toggle("drag-target-current") } } on:drop={ () => { drop(event); event.target.classList.toggle("drag-target-current") }}>
 <style>
-    .delete {
-            background-color: white;
-            border: none;
-    }
-    .delete:hover {
-            background-color: grey;
-            font-weight: 700;
-    }
-    .done {
-        color: grey;
-        text-decoration: line-through;
-    }
-    .todo-entry {
-            display: flex;
-    }
+    
     .drag-target {
         height: 5px;
         color: rgba(0, 0, 0, 0);
